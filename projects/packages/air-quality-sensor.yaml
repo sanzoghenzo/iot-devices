@@ -1,0 +1,80 @@
+sensor:
+  # BME280 Temperature, Pressure, Humidity Sensor
+  - platform: bme280_i2c
+    temperature:
+      name: ${friendly_name} Temperature
+      id: temp
+      # oversampling: 16x
+    pressure:
+      name: ${friendly_name} Pressure
+    humidity:
+      name: ${friendly_name} Humidity
+      id: humi
+    address: 0x76
+    update_interval: 60s
+    iir_filter: "OFF" # 2x, 4x, 16x
+
+  # CCS811 Air Quality Sensor
+  - platform: ccs811
+    eco2:
+      name: ${friendly_name} eCO2
+      id: eco2
+    tvoc:
+      name: ${friendly_name} Total VOC
+      id: tvoc
+    address: 0x5A
+    update_interval: 60s
+    temperature: temp
+    humidity: humi
+    # baseline: 0xA483
+
+text_sensor:
+  # Indoor Air Quality
+  - platform: template
+    name: ${friendly_name} IAQ
+    icon: "mdi:air-filter"
+    lambda: |-
+      int iaq_index, eco2_val, tvoc_val;
+      iaq_index = 5 - floor(abs(id(humi).state -50)/10);
+      eco2_val = id(eco2).state;
+      if (eco2_val <= 600) {
+        iaq_index += 5;
+      } else if (eco2_val <= 800) {
+        iaq_index += 4;
+      } else if (eco2_val <= 1500) {
+        iaq_index += 3;
+      } else if (eco2_val <= 1800) {
+        iaq_index += 2;
+      } else {
+        iaq_index += 1;
+      }
+      tvoc_val = id(tvoc).state;
+      if (tvoc_val <= 65) {
+        iaq_index += 5;
+      } else if (tvoc_val <= 220) {
+        iaq_index += 4;
+      } else if (tvoc_val <= 660) {
+        iaq_index += 3;
+      } else if (tvoc_val <= 2200) {
+        iaq_index += 2;
+      } else {
+        iaq_index += 1;
+      }
+      ESP_LOGD("main", "Current IAQ index %d", iaq_index);
+
+      /*
+       * Transform IAQ index to human readable text according to Indoor Air Quality UK:
+       * http://www.iaquk.org.uk/
+       */
+      if (iaq_index <= 6) {
+        return {"Unhealty"};
+      } else if (iaq_index <= 9) {
+        return {"Poor"};
+      } else if (iaq_index <= 12) {
+        return {"Moderate"};
+      } else if (iaq_index <= 14) {
+        return {"Good"};
+      }
+      else {
+        return {"Excellent"};
+      }

@@ -1,0 +1,11 @@
+substitutions:
+  device_name: sensori-camera
+  friendly_name: Sensori camera
+
+packages:
+  - !include packages/esp32h2.yaml
+  - !include packages/i2c.yaml
+  - !include packages/air-quality-sensor.yaml
+  - !include packages/light-sensor.yaml
+  - !include packages/pir-sensor.yaml
+  - !include packages/presence-sensor.yaml

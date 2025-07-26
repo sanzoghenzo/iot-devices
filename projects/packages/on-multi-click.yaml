@@ -1,0 +1,49 @@
+- timing:
+    - ON for at most 0.5s
+    - OFF for at most 0.5s
+    - ON for at most 0.5s
+    - OFF for at least 0.2s
+  then: !include
+    file: publish-mqtt-or-toggle.yaml
+    vars:
+      payload: double
+
+- timing:
+    - OFF for at most 0.5s
+    - ON for at most 0.5s
+    - OFF for at most 0.5s
+    - ON for at least 0.2s
+  then: !include
+    file: publish-mqtt-or-toggle.yaml
+    vars:
+      payload: double
+
+- timing:
+    - ON for at most 0.5s
+    - OFF for at least 0.5s
+  then: !include
+    file: publish-mqtt-or-toggle.yaml
+    vars:
+      payload: single
+
+- timing:
+    - OFF for at most 0.5s
+    - ON for at least 0.5s
+  then: !include
+    file: publish-mqtt-or-toggle.yaml
+    vars:
+      payload: single
+
+- timing:
+    - ON for at least 0.5s
+  then: !include
+    file: publish-mqtt-or-toggle.yaml
+    vars:
+      payload: long
+
+- timing:
+    - OFF for at least 0.5s
+  then: !include
+    file: publish-mqtt-or-toggle.yaml
+    vars:
+      payload: long

@@ -1,0 +1,12 @@
+- if:
+    condition:
+      and:
+        - wifi.connected:
+        - mqtt.connected:
+        - switch.is_on: ${relay_id}
+    then:
+      - mqtt.publish:
+          topic: ${topic}
+          payload: ${payload}
+    else:
+      - switch.toggle: ${relay_id}

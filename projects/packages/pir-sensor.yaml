@@ -1,0 +1,7 @@
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO12
+      mode: INPUT_PULLUP
+    name: ${friendly_name} PIR
+    device_class: motion

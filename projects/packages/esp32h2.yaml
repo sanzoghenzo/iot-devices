@@ -1,0 +1,31 @@
+esphome:
+  name: $device_name
+  friendly_name: $friendly_name
+
+esp32:
+  board: esp32-h2-devkitm-1
+  variant: esp32h2
+  framework:
+    type: esp-idf
+    version: 5.4.2
+    platform_version: 54.03.21
+
+logger:
+  level: INFO
+
+network:
+  enable_ipv6: true
+
+openthread:
+  tlv: !secret tlv_data
+
+# until it supports matter
+api:
+
+button:
+  - platform: restart
+    entity_category: diagnostic
+    icon: mdi:power-cycle
+    name: "ESP reboot"
+  - platform: factory_reset
+    name: "Restart ESP with Factory Default Settings"
