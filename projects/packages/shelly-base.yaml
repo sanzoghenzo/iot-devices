@@ -21,11 +21,7 @@ ota:
 
 captive_portal:
 
-mqtt:
-  broker: !secret mqtt_broker
-  username: !secret mqtt_user
-  password: !secret mqtt_password
-
+api:
 # Enable logging
 logger:
 
