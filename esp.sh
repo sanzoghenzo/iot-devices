@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 device_arg=""
 command_args=""
@@ -33,4 +33,4 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-$container_cmd run --rm --privileged -v "${PWD}/projects":/config $device_arg -it ghcr.io/esphome/esphome $command_args $device_arg
+$container_cmd run --rm --privileged --network host -v "${PWD}/projects":/config $device_arg -it ghcr.io/esphome/esphome $command_args $device_arg
