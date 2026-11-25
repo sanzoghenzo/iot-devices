@@ -1,3 +1,6 @@
+substitutions:
+  log_level: INFO
+
 esphome:
   name: $device_name
   friendly_name: $friendly_name
@@ -11,7 +14,7 @@ esp32:
     platform_version: 54.03.21
 
 logger:
-  level: INFO
+  level: ${log_level}
 
 network:
   enable_ipv6: true
@@ -19,13 +22,16 @@ network:
 openthread:
   tlv: !secret tlv_data
 
-# until it supports matter
 api:
+ota:
+  - platform: esphome
+    id: ota_esphome
 
 button:
   - platform: restart
     entity_category: diagnostic
     icon: mdi:power-cycle
-    name: "ESP reboot"
+    name: ESP reboot
   - platform: factory_reset
-    name: "Restart ESP with Factory Default Settings"
+    name: Restart ESP with Factory Default Settings
+    internal: true
