@@ -1,6 +1,30 @@
+number:
+  - platform: template
+    name: "Illuminance Offset"
+    id: illuminance_offset_ui
+    unit_of_measurement: "lx"
+    min_value: -100
+    max_value: 100
+    step: 5
+    mode: slider
+    update_interval: never
+    optimistic: true
+    restore_value: true
+    initial_value: 0
+    icon: "mdi:brightness-5"
+    entity_category: config
+    on_value:
+      - lambda: "id(illuminance_sensor).update();"
+
 sensor:
   # BH1750 Light Sensor
   - platform: bh1750
     name: ${friendly_name} Illuminance
+    id: illuminance_sensor
     address: 0x23
     update_interval: 60s
+    accuracy_decimals: 1
+    filters:
+      - lambda: "return x + id(illuminance_offset_ui).state;"
+      - clamp:
+          min_value: 0

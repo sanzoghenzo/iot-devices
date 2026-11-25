@@ -6,74 +6,95 @@ uart:
   stop_bits: 1
 
 ld2410:
-  #timeout: 10s
-  throttle: 1000ms
-  id: ld2410_device
 
 sensor:
   - platform: ld2410
-    # light:
-    #   name: Light
+    light:
+      name: mmWave Light
+      disabled_by_default: true
+      entity_category: diagnostic
     moving_distance:
-      name: Moving Distance
+      name: Moving Target Distance
+      entity_category: diagnostic
     still_distance:
-      name: Still Distance
+      name: Still Target Distance
+      entity_category: diagnostic
     moving_energy:
-      name: Move Energy
+      name: Moveing Target Energy
+      entity_category: diagnostic
     still_energy:
-      name: Still Energy
+      name: Still Target Energy
+      entity_category: diagnostic
     detection_distance:
       name: Detection Distance
-      id: presence_det_dist
+      entity_category: diagnostic
     g0:
       move_energy:
-        name: G0 move energy
+        name: Gate 0 Movement Energy
+        entity_category: diagnostic
       still_energy:
-        name: G0 still energy
+        name: Gate 0 Still Energy
+        entity_category: diagnostic
     g1:
       move_energy:
-        name: G1 move energy
+        name: Gate 1 Movement Energy
+        entity_category: diagnostic
       still_energy:
-        name: G1 still energy
+        name: Gate 1 Still Energy
+        entity_category: diagnostic
     g2:
       move_energy:
-        name: G2 move energy
+        name: Gate 2 Movement Energy
+        entity_category: diagnostic
       still_energy:
-        name: G2 still energy
+        name: Gate 2 Still Energy
+        entity_category: diagnostic
     g3:
       move_energy:
-        name: G3 move energy
+        name: Gate 3 Movement Energy
+        entity_category: diagnostic
       still_energy:
-        name: G3 still energy
+        name: Gate 3 Still Energy
+        entity_category: diagnostic
     g4:
       move_energy:
-        name: G4 move energy
+        name: Gate 4 Movement Energy
+        entity_category: diagnostic
       still_energy:
-        name: G4 still energy
+        name: Gate 4 Still Energy
+        entity_category: diagnostic
     g5:
       move_energy:
-        name: G5 move energy
+        name: Gate 5 Movement Energy
+        entity_category: diagnostic
       still_energy:
-        name: G5 still energy
+        name: Gate 5 Still Energy
+        entity_category: diagnostic
     g6:
       move_energy:
-        name: G6 move energy
+        name: Gate 6 Movement Energy
+        entity_category: diagnostic
       still_energy:
-        name: G6 still energy
+        name: Gate 6 Still Energy
+        entity_category: diagnostic
     g7:
       move_energy:
-        name: G7 move energy
+        name: Gate 7 Movement Energy
+        entity_category: diagnostic
       still_energy:
-        name: G7 still energy
+        name: Gate 7 Still Energy
+        entity_category: diagnostic
     g8:
       move_energy:
-        name: G8 move energy
+        name: Gate 8 Movement Energy
+        entity_category: diagnostic
       still_energy:
-        name: G8 still energy
+        name: Gate 8 Still Energy
+        entity_category: diagnostic
 
   # Retain last Detection Distance reported
   - platform: template
-    name: "Last Detection Distance"
+    name: Last Detection Distance
     id: last_detection_distance
     unit_of_measurement: cm
     accuracy_decimals: 0
@@ -89,135 +110,147 @@ binary_sensor:
   - platform: ld2410
     has_target:
       name: Presence
-      id: binary_has_target
     has_moving_target:
       name: Moving Target
+      entity_category: diagnostic
     has_still_target:
       name: Still Target
+      entity_category: diagnostic
     # out_pin_presence_status:
     #   name: "Out pin presence status"
   ## Set Up Zones Based On Distance reported by the sensor
   - platform: template
-    name: "Zone 1 Occupancy"
+    name: Zone 1 Occupancy
     device_class: occupancy
     icon: mdi:motion-sensor
     lambda: |-
-      if ((id(binary_has_target).state) && ((id(last_detection_distance).state < id(presence_z1_end).state))) {
-        return true;
-      } else {
-        return false;
-      }
+      return id(binary_has_target).state && id(last_detection_distance).state < id(presence_z1_end).state;
   - platform: template
-    name: "Zone 2 Occupancy"
+    name: Zone 2 Occupancy
     device_class: occupancy
     icon: mdi:motion-sensor
     lambda: |-
-      if ((id(binary_has_target).state) && ((id(presence_z1_end).state < id(last_detection_distance).state) && (id(last_detection_distance).state < id(presence_z2_end).state))) {
-        return true;
-      } else {
-        return false;
-      }
+      return id(binary_has_target).state && id(presence_z1_end).state < id(last_detection_distance).state && id(last_detection_distance).state < id(presence_z2_end).state;
   - platform: template
-    name: "Zone 3 Occupancy"
+    name: Zone 3 Occupancy
     device_class: occupancy
     icon: mdi:motion-sensor
     lambda: |-
-      if ((id(binary_has_target).state) && ((id(presence_z2_end).state < id(last_detection_distance).state) && (id(last_detection_distance).state < id(presence_z3_end).state))) {
-        return true;
-      } else {
-        return false;
-      }
+      return id(binary_has_target).state && id(presence_z2_end).state < id(last_detection_distance).state && id(last_detection_distance).state < id(presence_z3_end).state;
 
 button:
   - platform: ld2410
     factory_reset:
-      entity_category: diagnostic
-      name: "LD 2410 Factory reset"
+      name: "Factory Reset mmWave"
+      disabled_by_default: true
+      entity_category: config
     restart:
-      entity_category: diagnostic
-      name: "LD 2410 Restart"
+      name: "Restart mmWave"
+      disabled_by_default: true
+      entity_category: config
     query_params:
-      entity_category: diagnostic
-      name: "Query params"
+      name: Get Values
+      disabled_by_default: true
+      entity_category: config
 
 switch:
   - platform: ld2410
     engineering_mode:
       name: Engineering mode
+      entity_category: config
     bluetooth:
-      name: Control bluetooth
+      name: mmWave Bluetooth
+      disabled_by_default: true
+      entity_category: config
 
-# text_sensor:
-#   - platform: ld2410
-#     version:
-#       name: Firmware version
-#       entity_category: diagnostic
-#       disabled_by_default: $disable_entities
-#     mac_address:
-#       name: Mac address
-#       entity_category: diagnostic
-#       disabled_by_default: $disable_entities
+text_sensor:
+  - platform: ld2410
+    version:
+      name: "mmWave Firmware Version"
+      entity_category: diagnostic
+    mac_address:
+      name: "mmWave MAC Address"
+      disabled_by_default: true
+      entity_category: diagnostic
 
 number:
   - platform: ld2410
     timeout:
-      name: Timeout
+      name: Occupancy Off Delay
       entity_category: config
     light_threshold:
-      name: Light threshold
+      name: mmWave Light Threshold
+      disabled_by_default: True
       entity_category: config
     max_move_distance_gate:
-      name: Max move distance gate
+      name: Max Movement Distance Gate
       entity_category: config
     max_still_distance_gate:
-      name: Max still distance gate
+      name: Max Still Distance Gate
       entity_category: config
     g0:
       move_threshold:
-        name: G0 move threshold
+        name: Gate 0 Movement Sensitivity
+        entity_category: config
       still_threshold:
-        name: G0 still threshold
+        name: Gate 0 Still Sensitivity
+        entity_category: config
     g1:
       move_threshold:
-        name: G1 move threshold
+        name: Gate 1 Movement Sensitivity
+        entity_category: config
       still_threshold:
-        name: G1 still threshold
+        name: Gate 1 Still Sensitivity
+        entity_category: config
     g2:
       move_threshold:
-        name: G2 move threshold
+        name: Gate 2 Movement Sensitivity
+        entity_category: config
       still_threshold:
-        name: G2 still threshold
+        name: Gate 2 Still Sensitivity
+        entity_category: config
     g3:
       move_threshold:
-        name: G3 move threshold
+        name: Gate 3 Movement Sensitivity
+        entity_category: config
       still_threshold:
-        name: G3 still threshold
+        name: Gate 3 Still Sensitivity
+        entity_category: config
     g4:
       move_threshold:
-        name: G4 move threshold
+        name: Gate 4 Movement Sensitivity
+        entity_category: config
       still_threshold:
-        name: G4 still threshold
+        name: Gate 4 Still Sensitivity
+        entity_category: config
     g5:
       move_threshold:
-        name: G5 move threshold
+        name: Gate 5 Movement Sensitivity
+        entity_category: config
       still_threshold:
-        name: G5 still threshold
+        name: Gate 5 Still Sensitivity
+        entity_category: config
     g6:
       move_threshold:
-        name: G6 move threshold
+        name: Gate 6 Movement Sensitivity
+        entity_category: config
       still_threshold:
-        name: G6 still threshold
+        name: Gate 6 Still Sensitivity
+        entity_category: config
     g7:
       move_threshold:
-        name: G7 move threshold
+        name: Gate 7 Movement Sensitivity
+        entity_category: config
       still_threshold:
-        name: G7 still threshold
+        name: Gate 7 Still Sensitivity
+        entity_category: config
     g8:
       move_threshold:
-        name: G8 move threshold
+        name: Gate 8 Movement Sensitivity
+        entity_category: config
       still_threshold:
-        name: G8 still threshold
-
+        name: Gate 8 Still Sensitivity
+        entity_category: config
   # setup for 3 zones --> occupancy ending values (distance)
   - platform: template
     name: Zone 1 End Distance
@@ -265,14 +298,18 @@ number:
 select:
   - platform: ld2410
     distance_resolution:
+      name: Distance Gate Resolution
+      disabled_by_default: true
       entity_category: config
-      name: Distance resolution
     baud_rate:
+      name: mmWave Sensor Baud Rate
+      disabled_by_default: true
       entity_category: config
-      name: Baud rate
     light_function:
+      name: mmWave Light Function
+      disabled_by_default: true
       entity_category: config
-      name: Light function
     out_pin_level:
+      name: GPIO Pin Level
+      disabled_by_default: true
       entity_category: config
-      name: Out pin level
